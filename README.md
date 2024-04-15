@@ -8,4 +8,4 @@ Los datos del carrito se mantienen aunque se recargue la pagina por el uso de Lo
 
 La estructura del proyecto se hizo con Vite, además se usa React (claramente) y TypeScript; los estilos están precargados por un archivo CSS, por lo que no formo parte de mi aprendizaje y tambien se uso un custom Hook para mejorar la simplicidad del proyecto.
 
-Un proyecto sencillo pero adecuado para comenzar con React desde 0.
+Un proyecto sencillo pero adecuado para comenzar con React y TypeScript desde 0.
