@@ -1,6 +1,13 @@
-import React from "react";
+import type { Guitar, CartItem } from "../types";
 
-export default function GuitarCarrito({guitar, removeFromCart, increaseQuantity, decreaseQuantity}) {
+type GuitarProps = {
+    guitar: CartItem;
+    removeFromCart: (id: Guitar["id"]) => void
+    increaseQuantity: (id: Guitar["id"]) => void
+    decreaseQuantity: (id: Guitar["id"]) => void
+};
+
+export default function GuitarCarrito({guitar, removeFromCart, increaseQuantity, decreaseQuantity} : GuitarProps) {
     const { name, image, price, quantity } = guitar;
 
     return (
