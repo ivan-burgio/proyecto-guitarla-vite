@@ -13,42 +13,61 @@ export type CartState = {
     cart: CartItem[];
 };
 
-export const initialState : CartState = {
+export const initialState: CartState = {
     data: db,
     cart: [],
-}
+};
+
+const MAX_ITEMS = 5;
+const MIN_ITEMS = 1;
 
 export const cartReducer = (
     state: CartState = initialState,
     action: CartActions
 ) => {
-    if(action.type === "add-to-cart") {
-        return {
-            ...state
+    if (action.type === "add-to-cart") {
+        const itemExist = state.cart.findIndex(
+            (guitar) => guitar.id === action.payload.item.id
+        );
+
+        let updateCart: CartItem[] = [];
+
+        if (itemExist !== -1) {
+            if (state.cart[itemExist].quantity >= MAX_ITEMS) return;
+            updateCart = [...state.cart];
+            updateCart[itemExist].quantity++;
+        } else {
+            const newItem: CartItem = { ...action.payload.item, quantity: 1 };
+            updateCart = [...state.cart, newItem];
         }
+
+        return {
+            ...state,
+            cart: updateCart,
+        };
     }
 
-    if(action.type === "remove-from-cart") {
+    if (action.type === "remove-from-cart") {
         return {
-            ...state
-        }
+            ...state,
+        };
     }
 
-    if(action.type === "decrease-quantity") {
+    if (action.type === "decrease-quantity") {
         return {
-            ...state
-        }
+            ...state,
+        };
     }
 
-    if(action.type === "increase-quantity") {
+    if (action.type === "increase-quantity") {
         return {
-            ...state
-        }
+            ...state,
+        };
     }
 
-    if(action.type === "clear-cart") {
+    if (action.type === "clear-cart") {
         return {
-            ...state
-        }
+            ...state,
+        };
     }
-}
+};
