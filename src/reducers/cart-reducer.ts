@@ -13,9 +13,14 @@ export type CartState = {
     cart: CartItem[];
 };
 
+const initialCart = (): CartItem[] => {
+    const localStorageCart = localStorage.getItem("cart");
+    return localStorageCart ? JSON.parse(localStorageCart) : [];
+};
+
 export const initialState: CartState = {
     data: db,
-    cart: [],
+    cart: initialCart(),
 };
 
 const MAX_ITEMS = 5;
@@ -26,16 +31,24 @@ export const cartReducer = (
     action: CartActions
 ) => {
     if (action.type === "add-to-cart") {
-        const itemExist = state.cart.findIndex(
+        const itemExist = state.cart.find(
             (guitar) => guitar.id === action.payload.item.id
         );
 
         let updateCart: CartItem[] = [];
 
-        if (itemExist !== -1) {
-            if (state.cart[itemExist].quantity >= MAX_ITEMS) return;
-            updateCart = [...state.cart];
-            updateCart[itemExist].quantity++;
+        if (itemExist) {
+            updateCart = state.cart.map((item) => {
+                if (item.id === action.payload.item.id) {
+                    if (item.quantity < MAX_ITEMS) {
+                        return { ...item, quantity: item.quantity + 1 };
+                    } else {
+                        return item;
+                    }
+                } else {
+                    return item;
+                }
+            });
         } else {
             const newItem: CartItem = { ...action.payload.item, quantity: 1 };
             updateCart = [...state.cart, newItem];
@@ -48,26 +61,54 @@ export const cartReducer = (
     }
 
     if (action.type === "remove-from-cart") {
+        const cart = state.cart.filter((item) => item.id != action.payload.id);
+
         return {
             ...state,
+            cart,
         };
     }
 
     if (action.type === "decrease-quantity") {
+        const cart = state.cart.map((item) => {
+            if (item.id === action.payload.id && item.quantity > MIN_ITEMS) {
+                return {
+                    ...item,
+                    quantity: item.quantity - 1,
+                };
+            }
+
+            return item;
+        });
+
         return {
             ...state,
+            cart,
         };
     }
 
     if (action.type === "increase-quantity") {
+        const cart = state.cart.map((item) => {
+            if (item.id === action.payload.id && item.quantity < MAX_ITEMS) {
+                return {
+                    ...item,
+                    quantity: item.quantity + 1,
+                };
+            }
+
+            return item;
+        });
+
         return {
             ...state,
+            cart,
         };
     }
 
     if (action.type === "clear-cart") {
         return {
             ...state,
+            cart: [],
         };
     }
 };

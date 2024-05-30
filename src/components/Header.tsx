@@ -1,26 +1,22 @@
+import { useMemo, Dispatch } from "react";
 import GuitarCarrito from "./GuitarCarrito";
-
-import type { Guitar, CartItem } from "../types";
+import type { CartItem } from "../types";
+import type { CartActions } from "../reducers/cart-reducer";
 
 type HeaderProps = {
-    cart : CartItem[]
-    removeFromCart : (id: Guitar["id"]) => void
-    increaseQuantity : (id: Guitar["id"]) => void
-    decreaseQuantity : (id: Guitar["id"]) => void
-    clearCart : () => void
-    isEmpty : boolean
-    cartTotal : number
-}
+    cart: CartItem[];
+    dispatch: Dispatch<CartActions>;
+};
 
-export default function Header({
-    cart,
-    removeFromCart,
-    increaseQuantity,
-    decreaseQuantity,
-    clearCart,
-    isEmpty,
-    cartTotal,
-} : HeaderProps ) {
+export default function Header({ cart, dispatch }: HeaderProps) {
+    // State Derivado
+    const isEmpty = useMemo(() => cart.length === 0, [cart]);
+    const cartTotal = useMemo(
+        () =>
+            cart.reduce((total, item) => total + item.quantity * item.price, 0),
+        [cart]
+    );
+
     return (
         <header className="py-5 header">
             <div className="container-xl">
@@ -44,7 +40,9 @@ export default function Header({
 
                             <div id="carrito" className="bg-white p-3">
                                 {isEmpty ? (
-                                    <p className="text-center">El carrito esta vacio</p>
+                                    <p className="text-center">
+                                        El carrito esta vacio
+                                    </p>
                                 ) : (
                                     <>
                                         <table className="w-100 table">
@@ -62,9 +60,7 @@ export default function Header({
                                                     <GuitarCarrito
                                                         key={guitar.id}
                                                         guitar={guitar}
-                                                        removeFromCart={removeFromCart}
-                                                        increaseQuantity={increaseQuantity}
-                                                        decreaseQuantity={decreaseQuantity}
+                                                        dispatch={dispatch}
                                                     />
                                                 ))}
                                             </tbody>
@@ -72,12 +68,16 @@ export default function Header({
 
                                         <p className="text-end">
                                             Total pagar:{" "}
-                                            <span className="fw-bold">${cartTotal}</span>
+                                            <span className="fw-bold">
+                                                ${cartTotal}
+                                            </span>
                                         </p>
 
                                         <button
                                             className="btn btn-dark w-100 mt-3 p-2"
-                                            onClick={clearCart}
+                                            onClick={() =>
+                                                dispatch({ type: "clear-cart" })
+                                            }
                                         >
                                             Vaciar Carrito
                                         </button>
