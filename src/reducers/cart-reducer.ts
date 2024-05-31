@@ -111,4 +111,6 @@ export const cartReducer = (
             cart: [],
         };
     }
+
+    return state;
 };
